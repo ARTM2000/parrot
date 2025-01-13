@@ -6,8 +6,8 @@ server:
 
 requests:
   - method: GET
-    path: /some/route/here/.*/example
+    path: /test
     response_file: ./examples/response.example.json
   - method: POST
-    path: /some/route/here/.*/example
+    path: /some/route/here/.*/example/3
     response_file: ./examples/response.example.json

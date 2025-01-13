@@ -83,7 +83,7 @@ func (c *config) IsValid() bool {
 		}
 
 		if _, err := regexp.Compile(r.Path); err != nil {
-			slog.Error(fmt.Sprintf("unable to parse request path `%s`", r.Path))
+			slog.Error(fmt.Sprintf("unable to parse request path `%s", r.Path))
 			return false
 		}
 	}
