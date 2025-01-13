@@ -1,0 +1,13 @@
+version: 1
+
+server:
+  port: 11000
+  watch: true
+
+requests:
+  - method: GET
+    path: /some/route/here/.*/example
+    response_file: ./examples/response.example.json
+  - method: POST
+    path: /some/route/here/.*/example
+    response_file: ./examples/response.example.json

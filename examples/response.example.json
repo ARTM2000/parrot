@@ -1,0 +1,12 @@
+{
+    "status": 200,
+    "data": {
+        "message": "hi",
+        "list": [
+            {
+                "id": 1,
+                "name": "a"
+            }
+        ]
+    }
+}
