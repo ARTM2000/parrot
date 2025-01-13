@@ -1,10 +1,10 @@
 package core
 
 type server struct {
-	Config config
+	Config *config
 }
 
-func RunServer(c config) error {
+func RunServer(c *config) error {
 	s := server{
 		Config: c,
 	}
@@ -12,7 +12,8 @@ func RunServer(c config) error {
 }
 
 func (s *server) run() error {
-	
+	ch := make(chan bool)
 
+	<-ch
 	return nil
 }

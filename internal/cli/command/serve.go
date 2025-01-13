@@ -18,7 +18,7 @@ var serveCommand = &cobra.Command{
 			os.Exit(1)
 		}
 
-		
+		core.RunServer(config)
 	},
 }
 
