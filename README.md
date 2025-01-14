@@ -1,3 +1,5 @@
+![Parrot](./docs/parrot-cover-hck.jpg)
+
 <!-- TOC -->
 * [Parrot](#parrot)
   * [Features](#features)
