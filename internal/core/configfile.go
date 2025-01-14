@@ -31,9 +31,8 @@ type requestConfig struct {
 
 func LoadConfig(configPath string) *config {
 	c := readConfigFromFile(configPath)
-
-	if c.Server.Watch {
-		go func() { c.watchConfigFile(configPath) }()
+	if c == nil || !c.IsValid() {
+		os.Exit(1)
 	}
 
 	return c
@@ -46,13 +45,13 @@ func readConfigFromFile(configPath string) *config {
 		return nil
 	}
 
-	var c config
+	c := &config{}
 	if err = yaml.Unmarshal(file, &c); err != nil {
 		slog.Error("fail to parse config", slog.Any("error", err))
 		return nil
 	}
 
-	return &c
+	return c
 }
 
 func (c *config) IsValid() bool {
@@ -91,7 +90,7 @@ func (c *config) IsValid() bool {
 	return true
 }
 
-func (c *config) watchConfigFile(path string) error {
+func watchConfigFile(c *config, path string) error {
 	lastStats, _ := os.Stat(path)
 
 	for {

@@ -12,27 +12,32 @@ import (
 )
 
 type server struct {
-	Config *config
+	ConfigPath string
 }
 
-func RunServer(c *config) error {
+func RunServer(configPath string) error {
 	s := server{
-		Config: c,
+		ConfigPath: configPath,
 	}
 	return s.run()
 }
 
 func (s *server) run() error {
+	initialConf := LoadConfig(s.ConfigPath)
+
 	app := fiber.New(fiber.Config{
 		DisableStartupMessage: true,
 	})
 
 	app.Use(cors.New())
 	app.Use("/*", func(c *fiber.Ctx) error {
-		fmt.Printf("config: %+v\n", s.Config)
+		currentConf := initialConf
+		if initialConf.Server.Watch {
+			currentConf = LoadConfig(s.ConfigPath)
+		}
 
 		var req *requestConfig
-		for _, r := range s.Config.Requests {
+		for _, r := range currentConf.Requests {
 			if re := regexp.MustCompile(r.Path); re.MatchString(c.Path()) {
 				req = &r
 				break
@@ -40,6 +45,11 @@ func (s *server) run() error {
 		}
 
 		if req == nil {
+			slog.Error("request_log",
+				slog.String("method", c.Method()),
+				slog.String("path", c.Path()),
+				slog.String("content_type", c.GetRespHeader(fiber.HeaderContentType)),
+			)
 			return c.Status(fiber.StatusNotFound).SendString("no response found for the request")
 		}
 
@@ -62,16 +72,22 @@ func (s *server) run() error {
 			c.Set(fiber.HeaderContentType, fiber.MIMETextPlain)
 		}
 
+		slog.Info("request_log",
+			slog.String("method", c.Method()),
+			slog.String("path", c.Path()),
+			slog.String("content_type", c.GetRespHeader(fiber.HeaderContentType)),
+		)
+
 		return c.Status(fiber.StatusOK).SendString(res)
 	})
 
 	go func() {
-		if err := app.Listen(fmt.Sprintf(":%d", s.Config.Server.Port)); err != nil {
+		if err := app.Listen(fmt.Sprintf(":%d", initialConf.Server.Port)); err != nil {
 			slog.Error(err.Error())
 		}
 	}()
 
-	slog.Info(fmt.Sprintf("server starts at http://0.0.0.0:%d\n", s.Config.Server.Port))
+	slog.Info(fmt.Sprintf("server starts at http://0.0.0.0:%d\n", initialConf.Server.Port))
 
 	ch := make(chan bool)
 	<-ch

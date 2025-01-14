@@ -8,7 +8,6 @@ import (
 )
 
 func registerCommands(c Composer) {
-	// todo: add commands here
 	// - validate config files
 	c.registerCommand(command.ValidateCommand())
 
@@ -43,7 +42,7 @@ func NewComposer() Composer {
 			Use:   "",
 			Short: "Manager command for parrot project",
 			Run: func(cmd *cobra.Command, args []string) {
-				fmt.Println("hi")
+				fmt.Println("run with --help, -h for guidance")
 			},
 		},
 	}
